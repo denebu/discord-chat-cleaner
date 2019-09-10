@@ -28,7 +28,7 @@ Token: (input Discord user token here, invisible)
 
 will do delete each message after modify it to random string (`bm5 .s kd34tlnqPIo`, say), sleeping 200ms.
 
-I recommend to use `--default-sleep` flag to avoid rate limits. `0.2` or greater is sufficient for me.
+I recommend to use `--default-sleep` flag to avoid frequent rate limits. `0.2` or greater is sufficient for me.
 
 You can see help via `python3 discord-chat-cleaner.py --help`.
 
