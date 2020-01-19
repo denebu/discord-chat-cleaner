@@ -13,7 +13,7 @@ Python 3.6+ is required.
 ```bash
 $ git clone https://github.com/denebu/discord-chat-cleaner
 $ cd discord-chat-cleaner
-$ pip3 -r requirements.txt
+$ pip3 install -r requirements.txt
 ```
 
 ## Usage
