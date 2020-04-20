@@ -59,13 +59,19 @@ class Crawler:
 
         logging.critical(f'Failed to request it, although we tried at {self.RATE_LIMITED_RETRY} times.')
 
-    def search_guild_messages_by_author_id(self, guild_id: int, author_id: int,
-                                             oldest_message_id: int, newest_message_id: int) \
+    def search_messages_by_author_id(self, room_id: int, room_type: str, author_id: int,
+                                     oldest_message_id: int, newest_message_id: int) \
             -> Generator[Tuple[int, list], None, None]:
         offset = 0
         total_results_size = 0
+
+        if room_type.lower() in ['channel', 'guild']:
+            room_type = room_type.lower() + 's'
+        else:
+            raise AssertionError('Invalid room_type argument. room_type should be either "channel" or "guild".')
+
         while True:
-            res = self._request('get', f'/guilds/{guild_id}/messages/search', {
+            res = self._request('get', f'/{room_type}/{room_id}/messages/search', {
                 'author_id': author_id,
                 'include_nsfw': True,
                 'offset': offset,
@@ -129,8 +135,10 @@ def generate_random(min_length=5, max_length=30, chars=''.join([string.digits, s
               help='A Discord bot/user token')
 @click.option('--token-type', type=click.Choice(['Bot', 'Bearer', 'User'], case_sensitive=False), default='User',
               help='A type of Discord token')
-@click.option('--guild-id', type=int, required=True,
-              help='A guild ID to bulky delete (for searching existed messages)')
+@click.option('--room-id', type=int, required=True,
+              help='The room ID to bulky delete (for searching existed messages)')
+@click.option('--room-type', type=click.Choice(['channel', 'guild']), required=True,
+              help='A type of the room')
 @click.option('--author-id', type=int, required=True,
               help='An author ID to bulky delete')
 @click.option('--newest-message-id', type=int, required=True,
@@ -144,7 +152,7 @@ def generate_random(min_length=5, max_length=30, chars=''.join([string.digits, s
               help='If --replace-before-delete is "Fixed", what message do you replace it to?')
 @click.option('--default-sleep', type=click.FloatRange(min=0), default=0,
               help='Default sleep interval per request (sec)')
-def main(token, token_type, guild_id, author_id, newest_message_id, oldest_message_id,
+def main(token, token_type, room_id, room_type, author_id, newest_message_id, oldest_message_id,
          replace_before_delete, replace_to, default_sleep):
     logging.basicConfig(format='%(asctime)s %(levelname)-8s %(funcName)s:%(lineno)d - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
@@ -154,8 +162,8 @@ def main(token, token_type, guild_id, author_id, newest_message_id, oldest_messa
 
     try:
         crawler = Crawler(token_str, default_sleep)
-        generator = crawler.search_guild_messages_by_author_id(guild_id, author_id,
-                                                               oldest_message_id, newest_message_id)
+        generator = crawler.search_messages_by_author_id(room_id, room_type, author_id,
+                                                         oldest_message_id, newest_message_id)
 
         newest_message_id = 0
         total_results_size = 0

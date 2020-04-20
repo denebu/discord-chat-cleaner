@@ -1,9 +1,10 @@
 # discord-chat-cleaner
 A fast, easy-of-use Discord chat cleaner (bulk deleter) written in Python.
 
-It supports two features:
+It supports three features:
  - *retry-if-rate-limited* feature will sleep and retry requests at most 5 times if rate limited. 
  - *modify-before-delete* feature will modify to random or given string before delete it.
+ - **[NEW!]** Now, you can bulky delete DMs!
 
 DISCLAIMER: Use at your own risk.
 
@@ -20,8 +21,8 @@ $ pip3 install -r requirements.txt
 For example,
 
 ```bash
-$ python3 discord-chat-cleaner.py --guild-id=12341234 --author-id=56785678 \
---newest-message-id=12345678 --oldest-message-id=0 \
+$ python3 discord-chat-cleaner.py --room-id=12341234 --room-type=guild \
+--author-id=56785678 --newest-message-id=12345678 --oldest-message-id=0 \
 --replace-before-delete=random --default-sleep=0.2
 Token: (input Discord user token here, invisible)
 ```
